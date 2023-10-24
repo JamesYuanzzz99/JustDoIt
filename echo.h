@@ -3,7 +3,7 @@
 
 #include <iostream>
 #include <stdlib.h>
-#include <string.h>
+#include <cstring>
 #include <assert.h>
 #include <unistd.h>
 #include <netinet/in.h>
@@ -15,6 +15,44 @@
 #include <arpa/inet.h>
 
 #include "processpool.h"
+#include "tcpserver.h"
+#include "tcpconnectionptr.h"
+
+static const int thread_nums = 8;
+
+namespace tiny_muduo
+{
+    class Address;
+    class EventLoop;
+} // namespace tiny_muduo
+
+class EchoServer
+{
+private:
+    tiny_muduo::EventLoop *loop;
+    tiny_muduo::TcpServer server_;
+
+public:
+    EchoServer(tiny_muduo::EventLoop *loop, const tiny_muduo::Address &listen_addr);
+
+    ~EchoServer() {}
+
+    void Start()
+    {
+        server_Start();
+    }
+    void ConnectionCallback(tiny_muduo::TcpConnectionPtr *connection_ptr)
+    {
+        std::cout << "echo_server has a new connection " << std::endl;
+    }
+
+    void MessageCallback(tiny_muduo::TcpConnectionPtr *connection_ptr)
+    {
+        std::string message(connection_ptr->Get());
+        std::cout << "echo_server get massage" << std::endl;
+        connection_ptr->Send(message);
+    }
+};
 
 class echo
 {
