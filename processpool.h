@@ -180,7 +180,8 @@ void processpool<T>::run_child()
             {
                 struct sockaddr_in client;
                 socklen_t client_addrlength = sizeof(client);
-                int connfd = accept(listenfd, (struct sockaddr *)(&client), &client_addrlength);
+                int connfd = accept(listenfd, (struct sockaddr *)(&client),
+                                    &client_addrlength);
                 addfd(epollfd, connfd);
                 users[connfd].init(epollfd, connfd, client);
                 std::cout << "child " << idx << " is addfding" << std::endl;
@@ -200,5 +201,4 @@ void processpool<T>::run_child()
     close(epollfd);
     close(pipefd);
 }
-
 #endif
